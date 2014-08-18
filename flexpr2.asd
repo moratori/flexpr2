@@ -38,6 +38,8 @@
 				:serial t
 				:components 
 				((:file "preprocessor")
+				 (:file "rmquant")
+			   (:file "rmopr")
 				 (:file "prenex")
 				 (:file "cnf")
 				 (:file "skolem")
