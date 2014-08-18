@@ -196,7 +196,7 @@
 	 (char-> quant)
 	 (make-typed-vterm 
 	   vterm
-	   type))))
+	   (intern type)))))
     
     (:exists vterm
       (lambda (quant term)
@@ -211,7 +211,7 @@
 	 (char-> quant)
 	 (make-typed-vterm 
 	   vterm
-	   type)))))
+	   (intern type))))))
 
   (quantseq 
     (quant #'list)

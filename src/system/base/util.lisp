@@ -10,6 +10,8 @@
 (in-package :flexpr2.system.base.util)
 
 
+
+
 (defmacro defclass* (classname super slots &rest more)
   `(progn 
      (defclass ,classname ,super
@@ -28,3 +30,13 @@
       (if flag
 	(intern (concatenate 'string prefix (format nil "~A" counter)))
 	(setf counter 0)))))
+
+
+(defun single? (list)
+  (= 1 (length list)))
+
+
+
+
+
+

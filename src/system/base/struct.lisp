@@ -90,12 +90,13 @@
 ;; Ax.(R(x) -> P(x)) に展開されるだけのもの
 (defclass* typed-vterm (term)
   ((vterm  :initform (error (make-condition 'initial-value-required-error))
-           :initarg :vvar
+           :initarg :vterm
            :accessor vterm
            :type t)
    (vtype  :initform (error (make-condition 'initial-value-required-error))
           :initarg :vtype
-          :accessor vtype)))
+          :accessor vtype
+	  :type symbol)))
 
 
 (defclass* fterm (term)

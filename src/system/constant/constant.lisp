@@ -38,6 +38,7 @@
 
     :->char
     :char->
+    :quantifier-domain
 
     )
   )
@@ -58,6 +59,7 @@
 (defvar +conjunctive-char+ #\&)
 (defvar +forall-char+ #\A)
 (defvar +exists-char+ #\E)
+(defvar +constant-prefix+ #\_)
 
 (defvar +reserved+ 
   (list 
@@ -74,7 +76,6 @@
     +forall-char+
     +exists-char+))
 
-(defvar +constant-prefix+ #\_)
 
 (defvar +forall+      'forall)
 (defvar +exists+      'exists)
@@ -84,6 +85,12 @@
 (defvar +disjunctive+ 'disjunctive)
 (defvar +conjunctive+ 'conjunctive)
 
+
+(defun quantifier-domain (quant)
+  (cond 
+    ((eq quant +forall+) +imply+)
+    ((eq quant +exists+) +conjunctive+)
+    (t (error "quantifier required"))))
 
 (defun ->char (obj)
   (cond 
