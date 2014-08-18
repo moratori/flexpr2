@@ -9,7 +9,10 @@
         :flexpr2.system.base.struct)
   (:import-from flexpr2.system.constant.error
       :invalid-token-error
-      :invalid-quantifier-error))
+      :invalid-quantifier-error)
+  (:export
+    :parse
+    ))
 (in-package :flexpr2.system.io.reader)
 
 #|
@@ -29,6 +32,11 @@
   tを変数、Xを論理式として Et.X は論理式である
 |#
 
+
+(defun parse (string)
+  (parse-with-lexer 
+    (lexer string)
+    *logical-expression-parser*))
 
 (defun tokenize (string reserved)
   (flet 
@@ -60,6 +68,7 @@
     ((char= token +rparen+)           :rparen)
     ((char= token +delimiter+)        :delimiter)
     ((char= token +separater+)        :separater)
+    ((char= token +typing+)           :typing)
     ((char= token +negation-char+)    :negation)
     ((char= token +imply-char+)       :imply)
     ((char= token +equivalence-char+) :equivalence)
@@ -90,6 +99,7 @@
      :rparen 
      :delimiter 
      :separater 
+     :typing
      :negation 
      :imply 
      :equivalence 
@@ -178,11 +188,30 @@
         (make-quantifier
           (char-> quant)
           term)))
+
+    (:forall :rparen vterm :typing :symbol :lparen
+     (lambda (quant rp vterm colon type lp)
+       (declare (ignore rp colon lp))
+       (make-quantifier
+	 (char-> quant)
+	 (make-typed-vterm 
+	   vterm
+	   type))))
+    
     (:exists vterm
       (lambda (quant term)
         (make-quantifier
           (char-> quant)
-          term))))
+          term)))
+
+    (:exists :rparen vterm :typing :symbol :lparen
+     (lambda (quant rp vterm colon type lp)
+       (declare (ignore rp colon lp))
+       (make-quantifier
+	 (char-> quant)
+	 (make-typed-vterm 
+	   vterm
+	   type)))))
 
   (quantseq 
     (quant #'list)

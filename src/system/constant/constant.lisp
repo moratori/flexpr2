@@ -21,6 +21,7 @@
     :+lparen+
     :+rparen+
     :+separater+
+    :+typing+
     :+constant-prefix+
 
     :+operators-char+
@@ -48,6 +49,7 @@
 (defvar +rparen+ #\()
 (defvar +delimiter+ #\.)
 (defvar +separater+ #\,)
+(defvar +typing+ #\:)
 
 (defvar +negation-char+    #\~)
 (defvar +imply-char+       #\>)
@@ -63,6 +65,7 @@
     +rparen+
     +delimiter+
     +separater+
+    +typing+
     +negation-char+
     +imply-char+
     +equivalence-char+

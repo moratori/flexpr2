@@ -16,6 +16,10 @@
     :const
     :make-vterm
 
+    :typed-vterm
+    :vtype
+    :make-typed-vterm
+
     :fterm
     :fsymbol
     :terms
@@ -86,6 +90,18 @@
           :initarg :const
           :accessor const
           :type boolean)))
+
+
+;; A(x:R).P(x) みたいにつかうためのシンタックスシュガー
+;; Ax.(R(x) -> P(x)) に展開されるだけのもの
+(defclass* typed-vterm (term)
+  ((vterm  :initform (error (make-condition 'initial-value-required-error))
+           :initarg :vvar
+           :accessor vterm
+           :type t)
+   (vtype  :initform (error (make-condition 'initial-value-required-error))
+          :initarg :vtype
+          :accessor vtype)))
 
 
 (defclass* fterm (term)

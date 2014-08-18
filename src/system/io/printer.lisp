@@ -18,6 +18,11 @@
 (defmethod print-object ((term vterm) stream)
   (format stream "~A" (var term)))
 
+(defmethod print-object ((term typed-vterm) stream)
+  (format stream "(~A:~A)"
+	  (print-object (vterm term) nil)
+	  (format nil "~A" (vtype term))))
+
 (defmethod print-object ((term fterm) stream)
   (format stream "~A(~{~A~^,~})"
           (fsymbol term)
@@ -46,6 +51,7 @@
   (format stream "~A~A"
           (->char (quant quantifier))
           (print-object (bound quantifier) nil)))
+
 
 
 
