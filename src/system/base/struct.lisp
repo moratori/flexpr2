@@ -3,8 +3,12 @@
 (defpackage :flexpr2.system.base.struct
   (:use :cl
         :flexpr2.system.constant.constant)
+
   (:import-from :flexpr2.system.constant.error
     :initial-value-required-error)
+  (:import-from :flexpr2.system.base.util
+    :defclass*)
+
   (:export
     :operator
     :opr
@@ -60,16 +64,6 @@
   )
 (in-package :flexpr2.system.base.struct)
 
-
-(defmacro defclass* (classname super slots &rest more)
-  `(progn 
-     (defclass ,classname ,super
-       ,slots
-       ,@more)
-     (defun ,(intern (concatenate 'string "MAKE-" (symbol-name classname))) ,(mapcar #'car slots)
-       (make-instance 
-         ',classname 
-         ,@(mapcan (lambda (x) (list (getf (cdr x) :initarg) (car x))) slots)))))
 
 
 
