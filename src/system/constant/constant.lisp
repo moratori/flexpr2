@@ -39,6 +39,8 @@
     :->char
     :char->
     :quantifier-domain
+    :opposite-opr
+		:opposite-quantifier
 
     )
   )
@@ -84,13 +86,35 @@
 (defvar +equivalence+ 'equivalence)
 (defvar +disjunctive+ 'disjunctive)
 (defvar +conjunctive+ 'conjunctive)
-
+(defvar +oporder+ 
+  (list 
+    `(,+negation+ . 4)
+    `(,+forall+ . 3)
+    `(,+exists+ . 3)
+    `(,+conjunctive+ . 2)
+    `(,+disjunctive+ . 2)
+    `(,+imply+ . 1)
+    `(,+equivalence+ . 1)))
 
 (defun quantifier-domain (quant)
   (cond 
     ((eq quant +forall+) +imply+)
     ((eq quant +exists+) +conjunctive+)
     (t (error "quantifier required"))))
+
+(defun opposite-opr (operator) 
+  (cond 
+    ((eq operator +conjunctive+) +disjunctive+)
+    ((eq operator +disjunctive+) +conjunctive+)
+    (t (error "undefined operator"))))
+
+(defun opposite-quantifier (quantifier)
+  (cond 
+    ((eq quantifier +forall+) +exists+)
+    ((eq quantifier +exists+) +forall+)
+    (t (error "udnefined quantifier"))))
+
+
 
 (defun ->char (obj)
   (cond 

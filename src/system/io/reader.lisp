@@ -136,12 +136,14 @@
         (declare (ignore rparen lparen))
         (make-literal nil (intern symbol) termseq)))
 
+    ;;; ここで setf で破壊的変更をおこなってるよ!!
     (:negation expr
       (lambda (op expr)
         (if (typep expr 'literal)
-          (progn 
-            (setf (negation expr) (not (negation expr)))
-            expr)
+          (make-literal 
+							(not (negation expr))
+							(pred expr)
+							(terms expr))
           (make-connected-logical-expression 
             (make-operator 
               (char-> op)) expr nil))))

@@ -28,7 +28,7 @@
 				:components 
 				((:file "util")
 				 (:file "struct")
-				 (:file "unifier")))
+				 (:file "term")))
 			 (:module "io"
 				:serial t
 				:components
@@ -43,7 +43,9 @@
 				 (:file "prenex")
 				 (:file "cnf")
 				 (:file "skolem")
-				 (:file "reduction")))
+				 (:file "reduction")
+				 (:file "literalize")
+				 (:file "top")))
 			 (:module "core"
 				:serial t
 				:components 

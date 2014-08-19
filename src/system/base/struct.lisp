@@ -30,6 +30,7 @@
     :make-fterm
 
     :logical-expression
+    :term-container
 
     :literal
     :negation
@@ -65,15 +66,9 @@
 (in-package :flexpr2.system.base.struct)
 
 
-
-
-(defclass term () 
-  ())
-
-
-(defclass logical-expression ()
-  ())
- 
+(defclass term () ())
+(defclass logical-expression () ())
+(defclass term-container () ())
 
 (defclass* vterm (term)
   ((var   :initform (error (make-condition 'initial-value-required-error))
@@ -88,6 +83,7 @@
 
 ;; A(x:R).P(x) みたいにつかうためのシンタックスシュガー
 ;; Ax.(R(x) -> P(x)) に展開されるだけのもの
+;; すぐに除去るため、このクラスはリーダによってしか使われない
 (defclass* typed-vterm (term)
   ((vterm  :initform (error (make-condition 'initial-value-required-error))
            :initarg :vterm
@@ -99,7 +95,7 @@
 	  :type symbol)))
 
 
-(defclass* fterm (term)
+(defclass* fterm (term term-container)
   ((fsymbol :initform (error (make-condition 'initial-value-required-error))
             :initarg :fsymbol
             :accessor fsymbol
@@ -148,9 +144,7 @@
 
 
 
-
-
-(defclass* literal (logical-expression)
+(defclass* literal (logical-expression term-container)
   ((negation :initform nil
              :initarg :negation
              :accessor negation

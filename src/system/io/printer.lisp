@@ -30,16 +30,11 @@
                   (terms term))))
 
 (defmethod print-object ((literal literal) stream)
-  (let ((neg (if (negation literal) 
-               +negation-char+ ""))
-        (pred (symbol-name (pred literal)))
-        (terms (mapcar (lambda (x) (print-object x nil)) 
-                  (terms literal))))
+  (let ((neg   (if (negation literal) +negation-char+ ""))
+        (pred  (symbol-name (pred literal)))
+        (terms (mapcar (lambda (x) (print-object x nil)) (terms literal))))
     (if terms
-      (format stream "~A~A(~{~A~^,~})"
-              neg
-              pred
-              terms)
+      (format stream "~A~A(~{~A~^,~})" neg pred terms)
       (format stream "~A~A" neg pred))))
 
 (defmethod print-object ((operator operator) stream)
@@ -54,11 +49,8 @@
 
 
 
-
 (defmethod print-object ((expr connected-logical-expression) stream)
-  (let ((operator (operator expr))
-        (left  (left expr))
-        (right (right expr)))
+  (with-accessors ((operator operator) (left  left) (right right)) expr
     (if right
       (format stream "~A~A ~A ~A~A"
               +rparen+
@@ -66,11 +58,9 @@
               (print-object operator nil)
               (print-object right nil)
               +lparen+)
-      (format stream "~A~A~A~A"
-              +rparen+
+      (format stream "~A~A"
               (print-object operator nil)
-              (print-object left nil)
-              +lparen+))))
+              (print-object left nil)))))
 
 (defmethod print-object ((expr quantifier-logical-expression) stream)
   (format stream "~A~A~A~A~A~A~A"
@@ -81,3 +71,7 @@
           (print-object (expr expr) nil)
           +lparen+
           +lparen+))
+
+
+
+
