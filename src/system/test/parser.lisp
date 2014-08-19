@@ -26,6 +26,7 @@
     "~AxEyAz.P(x,y,z)"
     "~Ax.~Ey.P(x,y)"
     "Ax.(P(z) & Ax.Q(x))"
+    "~Ax.~P(x)"
     )
   )
 
