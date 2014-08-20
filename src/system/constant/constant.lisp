@@ -42,6 +42,8 @@
     :opposite-opr
 		:opposite-quantifier
 
+		:+unique-bound-var-prefix+
+
     )
   )
 
@@ -95,6 +97,7 @@
     `(,+disjunctive+ . 2)
     `(,+imply+ . 1)
     `(,+equivalence+ . 1)))
+(defvar +unique-bound-var-prefix+ "U_")
 
 (defun quantifier-domain (quant)
   (cond 

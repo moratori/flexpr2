@@ -13,6 +13,10 @@
   (:export
     :parse
     ))
+
+;; 述語記号とドメイン名(要するに述語記号)をインターンする用のパッケージ
+(make-package :flexpr2.system.symbols)
+
 (in-package :flexpr2.system.io.reader)
 
 #|
@@ -128,13 +132,13 @@
       (lambda (symbol)
         (make-literal
           nil
-          (intern symbol)
+          (intern symbol :flexpr2.system.symbols)
           nil)))
 
     (:symbol :rparen termseq :lparen
       (lambda (symbol rparen termseq lparen)
         (declare (ignore rparen lparen))
-        (make-literal nil (intern symbol) termseq)))
+        (make-literal nil (intern symbol :flexpr2.system.symbols) termseq)))
 
     ;;; ここで setf で破壊的変更をおこなってるよ!!
     (:negation expr
@@ -198,7 +202,7 @@
 	 (char-> quant)
 	 (make-typed-vterm 
 	   vterm
-	   (intern type)))))
+	   (intern type :flexpr2.system.symbols)))))
     
     (:exists vterm
       (lambda (quant term)
@@ -213,7 +217,7 @@
 	 (char-> quant)
 	 (make-typed-vterm 
 	   vterm
-	   (intern type))))))
+	   (intern type :flexpr2.system.symbols))))))
 
   (quantseq 
     (quant #'list)

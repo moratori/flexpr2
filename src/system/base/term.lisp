@@ -17,6 +17,7 @@
 
 (defmethod term= (a b) nil)
 
+;; term の型によっては equal を変えた方がいいのでは?
 (defmethod term= ((term1 vterm) (term2 vterm))
   (and 
     (equal (var term1) (var term2))

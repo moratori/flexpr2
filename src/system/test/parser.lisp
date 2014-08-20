@@ -7,7 +7,9 @@
           flexpr2.system.formalize.top:simplify))
 
 (defvar *test-case*
-  '("P V Q"
+  '(
+		"Ex.(P(z) & Ex.Q(x))"
+		"P V Q"
     "P > Q > R   > S"
     "(P > Q) V S"
     "P"
@@ -33,7 +35,6 @@
 (define-test parser
   (dolist (each *test-case*)
     (let ((tmp (simplify (parse each))))
-      (print tmp)
       (assert-true tmp))))
 
 

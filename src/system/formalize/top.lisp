@@ -23,8 +23,16 @@
 
 
 (defmethod simplify ((lexpr logical-expression))
-  (literalize 
-    (remove-operator 
-    (remove-unused-quantifier 
-      (remove-domain-sugar lexpr))))
+
+	(multiple-value-bind (expr rule)
+(rename-bound-var
+		(literalize 
+			(remove-operator 
+				(remove-unused-quantifier 
+					(remove-domain-sugar lexpr)))))
+		(format t "EXPR: ~A~%RULE: ~A~%~%" expr rule)
+		expr
+		)
+  
+
   )
