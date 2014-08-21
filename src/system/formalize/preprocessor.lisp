@@ -6,8 +6,6 @@
     :cl
     :flexpr2.system.constant.constant
     :flexpr2.system.base.struct)
-  (:import-from :flexpr2.system.base.util
-    :single?)
   (:export
     :remove-domain-sugar)
   )
@@ -39,42 +37,26 @@
 
     (let ((head (car quants)))
       (with-accessors ((quant quant) (bound bound)) head
-	(if (single? quants)
-	  (if (typep bound 'typed-vterm)
-	    (make-quantifier-logical-expression
-	      (list (make-quantifier quant (vterm bound)))
-	      (make-connected-logical-expression
-		(make-operator 
-		  (quantifier-domain quant))
-		(make-literal 
-		  nil
-		  (vtype bound)
-		  (list (vterm bound)))
-		(remove-domain-sugar expr)))
-
-	    (make-quantifier-logical-expression 
-	      (list head)
-	      (remove-domain-sugar expr)))
 
 	  (if (typep bound 'typed-vterm) 
 	    (make-quantifier-logical-expression
 	      (list (make-quantifier quant (vterm bound)))
 	      (make-connected-logical-expression
-		(make-operator (quantifier-domain quant))
-		(make-literal 
-		  nil
-		  (vtype bound)
-		  (list (vterm bound)))
-		(remove-domain-sugar
-		  (make-quantifier-logical-expression
-		    (cdr quants)
-		    expr))))
-
-	    (make-quantifier-logical-expression
-	      (list head)
-	      (remove-domain-sugar
-		(make-quantifier-logical-expression
-		  (cdr quants)
-		  expr)))))))))
+					(make-operator (quantifier-domain quant))
+					(make-literal 
+						nil
+						(vtype bound)
+						(list (vterm bound)))
+					(remove-domain-sugar
+						(make-quantifier-logical-expression
+							(cdr quants)
+							expr))))
+			
+			(make-quantifier-logical-expression
+				(list head)
+				(remove-domain-sugar
+					(make-quantifier-logical-expression
+						(cdr quants)
+						expr))))))))
  
 

@@ -4,10 +4,19 @@
 
 (use-package :lisp-unit)
 (import '(flexpr2.system.io.reader:parse
-          flexpr2.system.formalize.top:simplify))
+          flexpr2.system.formalize.top:simplify-premises-lexpr
+					flexpr2.system.formalize.top:simplify-conseq-lexpr))
 
 (defvar *test-case*
   '(
+		"A(x : R).P(x)"
+		"E(x : T).P(x)"
+
+		"A(x : human)E(y : human).love(x,y)"
+		
+
+		"~Ax.P(x)"
+		"~Ax.~Ey.P(x,y)"
 		"Ex.(P(z) & Ex.Q(x))"
 		"P V Q"
     "P > Q > R   > S"
@@ -34,8 +43,12 @@
 
 (define-test parser
   (dolist (each *test-case*)
-    (let ((tmp (simplify (parse each))))
-      (assert-true tmp))))
+    (let* ((lexpr (parse each))
+					 (tmp1 (simplify-premises-lexpr lexpr))
+					 (tmp2 (simplify-conseq-lexpr   lexpr)))
+			(format t "~A~%~A~%~%" tmp1 tmp2)
+      (assert-true tmp1)
+			(assert-true tmp2))))
 
 
 (let ((result (run-tests '(parser))))

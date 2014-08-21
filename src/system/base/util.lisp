@@ -19,8 +19,6 @@
          ',classname 
          ,@(mapcan (lambda (x) (list (getf (cdr x) :initarg) (car x))) slots)))))
 
-(defun single? (list)
-  (= 1 (length list)))
 
 
 

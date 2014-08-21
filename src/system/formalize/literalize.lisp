@@ -5,8 +5,6 @@
     :cl
     :flexpr2.system.constant.constant
     :flexpr2.system.base.struct)
-  (:import-from :flexpr2.system.base.util
-                :single?)
   (:export
     :literalize))
 (in-package :flexpr2.system.formalize.literalize)
@@ -54,11 +52,9 @@
                 (list (make-quantifier (opposite-quantifier (quant head)) (bound head)))
                 (literalize 
                   (make-connected-logical-expression
-                  (make-operator +negation+)
-                  (if (single? quants) 
-                    expr 
-                    (make-quantifier-logical-expression (cdr quants) expr))
-                  nil)))))))
+										(make-operator +negation+)
+										(make-quantifier-logical-expression (cdr quants) expr)
+										nil)))))))
       (make-connected-logical-expression
         operator
         (literalize left)

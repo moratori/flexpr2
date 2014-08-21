@@ -70,7 +70,7 @@
 (defclass logical-expression () ())
 (defclass term-container () ())
 
-(defclass* vterm (term)
+(defclass* vterm (term term-container)
   ((var   :initform (error (make-condition 'initial-value-required-error))
           :initarg :var
           :accessor var
@@ -132,7 +132,7 @@
              :initarg :right
              :accessor right)))
 
-(defclass* quantifier-logical-expression (logical-expression)
+(defclass quantifier-logical-expression (logical-expression)
   ((quants   :initform (error (make-condition 'initial-value-required-error))
              :initarg :quants
              :accessor quants
@@ -141,7 +141,12 @@
              :initarg :expr
              :accessor expr)))
 
-
+(defun make-quantifier-logical-expression (quants expr)
+	(if (null quants)
+		expr
+		(make-instance 'quantifier-logical-expression
+									 :quants quants
+									 :expr expr)))
 
 
 (defclass* literal (logical-expression term-container)

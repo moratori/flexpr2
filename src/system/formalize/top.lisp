@@ -15,24 +15,48 @@
         :flexpr2.system.formalize.reduction
         )
   (:export
-    :simplify)
+    :simplify-premises-lexpr
+		:simplify-conseq-lexpr)
   )
 (in-package :flexpr2.system.formalize.top)
 
 
 
+(defun simplify-base (lexpr)
+	(literalize 
+		(remove-operator 
+			(remove-unused-quantifier 
+				(remove-domain-sugar lexpr)))))
 
-(defmethod simplify ((lexpr logical-expression))
 
-	(multiple-value-bind (expr rule)
-(rename-bound-var
-		(literalize 
-			(remove-operator 
-				(remove-unused-quantifier 
-					(remove-domain-sugar lexpr)))))
-		(format t "EXPR: ~A~%RULE: ~A~%~%" expr rule)
-		expr
-		)
-  
+(defun clause-formation (lexpr)
+	lexpr
+	)
 
-  )
+(defun simplify-premises-lexpr (lexpr)
+	(clause-formation 
+		(skolemization
+			(naive-cnf 
+				(prenex
+					(simplify-base lexpr))))))
+
+
+(defun simplify-conseq-lexpr (lexpr)
+	;; rule は ((x . U-123) (y . U-456) ...) の形
+	;; U-123とかU-456 を追っていけば具体的な項をもとめられ、
+	;; かつユーザが入力した時につかった変数に対応させられる
+	(multiple-value-bind (expr rule) (prenex (simplify-base lexpr))
+		(values 
+			(clause-formation
+				(skolemization 
+					(naive-cnf
+						(literalize 
+							(make-connected-logical-expression (make-operator +negation+) expr nil)))))
+			rule)))
+
+
+
+
+
+
+

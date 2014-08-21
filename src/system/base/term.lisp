@@ -7,6 +7,7 @@
         :flexpr2.system.base.struct)
   (:export
     :free-occurrence?
+		:substitute-term
     :term=)
   )
 (in-package :flexpr2.system.base.term)
@@ -34,8 +35,51 @@
 
 
 
+
+;;; 置き換え元が純粋に term= で比較して true　となるものについて置き換えをおこなう
+(defmethod substitute-term ((target vterm) (old vterm) (new vterm))
+	(if (term= target old) new target))
+(defmethod substitute-term ((target fterm) (old vterm) (new vterm))
+	(make-fterm
+		(fsymbol target)
+		(mapcar 
+			(lambda (x)
+				(substitute-term x old new))
+			(terms target))))
+
+(defmethod substitute-term ((target literal) (old vterm) (new vterm))
+	(make-literal
+		(negation target)
+		(pred target)
+		(mapcar 
+			(lambda (x)
+				(substitute-term x old new))
+			(terms target))))
+
+(defmethod substitute-term ((target connected-logical-expression) (old vterm) (new vterm))
+	(make-connected-logical-expression 
+		(operator target)
+		(substitute-term (left target) old new)
+		(substitute-term (right target) old new)))
+
+(defmethod substitute-term ((target quantifier-logical-expression) (old vterm) (new vterm))
+	(make-quantifier-logical-expression
+		(mapcar 
+			(lambda (q)
+				(with-accessors ((quant quant) (bound bound)) q
+					(make-quantifier
+						quant
+						(substitute-term bound old new))))
+			(quants target))
+		(substitute-term (expr target) old new)))
+
+
+
+
+
 (defmethod free-occurrence? ((term vterm) (obj (eql nil))) nil)
 (defmethod free-occurrence? ((term1 vterm) (term2 vterm)) (term= term1 term2))
+
 (defmethod free-occurrence? ((term vterm) (obj term-container))
   (some (lambda (x) (free-occurrence? term x)) (terms obj)))
 
