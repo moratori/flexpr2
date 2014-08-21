@@ -70,6 +70,16 @@
 (defclass logical-expression () ())
 (defclass term-container () ())
 
+
+
+(defmethod quants ((obj logical-expression))
+	nil)
+
+(defmethod expr ((obj logical-expression))
+	obj)
+
+
+
 (defclass* vterm (term term-container)
   ((var   :initform (error (make-condition 'initial-value-required-error))
           :initarg :var
@@ -131,6 +141,7 @@
    (right    :initform nil
              :initarg :right
              :accessor right)))
+
 
 (defclass quantifier-logical-expression (logical-expression)
   ((quants   :initform (error (make-condition 'initial-value-required-error))

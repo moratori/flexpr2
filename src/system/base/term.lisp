@@ -8,6 +8,8 @@
   (:export
     :free-occurrence?
 		:substitute-term
+		:update-rule
+		:rule=
     :term=)
   )
 (in-package :flexpr2.system.base.term)
@@ -74,6 +76,25 @@
 		(substitute-term (expr target) old new)))
 
 
+;; newrule は 書き換え規則 oldrule を更新するためのメタな書き換え規則
+;; oldrule : ((x . S1) (y . S2) (z . S3) ...)
+;; newrule : ((S1 . S123) (S3 . Z455))
+;; みたいなときに ((x . S123) (y . S2) (z . Z455)) みたいにしたものを返す
+(defun update-rule (oldrule newrule)
+	(reduce 
+		(lambda (result-rule eachrule)
+			(loop for old in result-rule
+						collect 
+						(destructuring-bind (a . b) old
+							(destructuring-bind (a- . b-) eachrule
+								(cons a (if (term= b a-) b- b))))))
+		newrule
+		:initial-value oldrule))
+
+(defun rule= (r1 r2)
+	(and
+		(term= (car r1) (car r2))
+		(term= (cdr r1) (cdr r2)))) 
 
 
 

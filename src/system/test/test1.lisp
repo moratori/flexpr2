@@ -17,6 +17,7 @@
 
 		"~Ax.P(x)"
 		"~Ax.~Ey.P(x,y)"
+
 		"Ex.(P(z) & Ex.Q(x))"
 		"P V Q"
     "P > Q > R   > S"

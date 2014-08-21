@@ -97,7 +97,7 @@
     `(,+disjunctive+ . 2)
     `(,+imply+ . 1)
     `(,+equivalence+ . 1)))
-(defvar +unique-bound-var-prefix+ "U_")
+(defvar +unique-bound-var-prefix+ "v_")
 
 (defun quantifier-domain (quant)
   (cond 

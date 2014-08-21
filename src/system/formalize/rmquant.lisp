@@ -1,5 +1,4 @@
 
-
 (in-package :cl-user)
 (defpackage :flexpr2.system.formalize.rmquant
   (:use 
@@ -14,10 +13,7 @@
   )
 (in-package :flexpr2.system.formalize.rmquant)
 
-
 ;;; 束縛されていない不必要な量化子を削除する
-
-
 
 (defmethod remove-unused-quantifier ((lexpr logical-expression)) lexpr)
 (defmethod remove-unused-quantifier ((lexpr (eql nil))) nil) 
@@ -31,12 +27,7 @@
 (defmethod remove-unused-quantifier ((lexpr quantifier-logical-expression))
   (with-accessors ((quants quants) (expr expr)) lexpr
     (let ((new-quants 
-            (remove-if (lambda (q) 
-                         (not (free-occurrence? (bound q) expr)))  quants)))
+            (remove-if-not (lambda (q) (free-occurrence? (bound q) expr)) quants)))
       (let ((new-expr (remove-unused-quantifier expr)))
         (if (null new-quants) new-expr
-          (make-quantifier-logical-expression
-            new-quants
-            new-expr))))))
-
-
+          (make-quantifier-logical-expression new-quants new-expr))))))

@@ -8,9 +8,12 @@
     :flexpr2.system.base.struct)
 	(:import-from :flexpr2.system.base.term
 								:substitute-term
+								:update-rule
+								:rule=
 								:term=)
 	(:export
-		:prenex))
+		:prenex
+		:re-prenex))
 (in-package :flexpr2.system.formalize.prenex)
 
 
@@ -107,19 +110,101 @@
 
 
 
-(defun prenex (lexpr)
-	(multiple-value-bind (expr rule) (rename-bound-var lexpr)	
-		;; ここで一応の rule をとっておく
-		;; といっても大部分はこのrule のだけを返せばおｋなはずなんだけど
-		;; prenex form にするときに Ex.P(x) V Ey.Q(y)
-		;; みたいのがきたときには Ex.(P(x) V Q(y)) にできるから
-		;; この場合に y -> x みたいな規則ができる. でこの規則を rule に適用させてやる
 
 
-		expr
 
-		)
-	)
+(defmethod join ((operator operator) (left literal) (right literal))
+	(make-connected-logical-expression operator left right))
+
+(defmethod join ((operator operator) (left connected-logical-expression) (right connected-logical-expression))
+	(let ((tmp1 (prenex% left))
+				(tmp2 (prenex% right)))
+		(make-quantifier-logical-expression
+			(append (quants tmp1) (quants tmp2))
+			(make-connected-logical-expression operator (expr tmp1) (expr tmp2)))))
+
+
+(defmethod join ((operator operator) (left literal) (right connected-logical-expression)) (join operator right left))
+(defmethod join ((operator operator) (left connected-logical-expression) (right literal)) 
+	(let ((tmp1 (prenex% left)))
+		(make-quantifier-logical-expression
+			(quants tmp1)
+			(make-connected-logical-expression operator (expr tmp1) right))))
+
+
+(defmethod join ((operator operator) (left literal) (right quantifier-logical-expression)) (join operator right left))
+(defmethod join ((operator operator) (left quantifier-logical-expression) (right literal)) 
+	(with-accessors ((quants quants) (expr expr)) left
+		(let ((tmp (prenex% expr)))
+			(make-quantifier-logical-expression
+				(append quants (quants tmp))
+				(make-connected-logical-expression operator (expr tmp) right)))))
+
+
+(defmethod join ((operator operator) (left connected-logical-expression) (right quantifier-logical-expression)) (join operator right left))
+(defmethod join ((operator operator) (left quantifier-logical-expression) (right connected-logical-expression)) 
+	(with-accessors ((quants quants) (expr expr)) left
+		(let ((tmp1 (prenex% expr))
+					(tmp2 (prenex% right)))
+			(make-quantifier-logical-expression
+				(append quants (quants tmp1) (quants tmp2))
+				(make-connected-logical-expression
+					operator (expr tmp1) (expr tmp2))))))
+
+
+;;; left と right が operator によってくっついてる時に それらを適切にくっつけ冠頭形にする
+(defmethod join ((operator operator) (left quantifier-logical-expression) (right quantifier-logical-expression))
+	(with-accessors ((quants-left quants) (expr-left expr)) left
+		(with-accessors ((quants-right quants) (expr-right expr)) right
+			(let* ((opr (opr operator))
+						 (quant-obj-left-head  (car quants-left))
+						 (quant-obj-right-head (car quants-right))
+						 (quant-left-head  (quant quant-obj-left-head))
+						 (quant-right-head (quant quant-obj-right-head)))
+				(cond 
+					;; Ax.Φ  & Ax.ψ  => Ax.(Φ  & ψ )
+					((and (eq quant-left-head quant-right-head)
+								(eq quant-left-head +forall+)
+								(eq opr +conjunctive+))
+					 (let* ((A (make-quantifier-logical-expression  (cdr quants-left)  expr-left))
+									(B (substitute-term 
+											 (make-quantifier-logical-expression 
+												 (cdr quants-right) expr-right) 
+											 (bound quant-obj-right-head) 
+											 (bound quant-obj-left-head)))
+									(new-matrix (prenex% (make-connected-logical-expression operator A B))))
+							 (make-quantifier-logical-expression
+								 (cons quant-obj-left-head (quants new-matrix))
+								 (expr new-matrix))
+						 ))
+					;; Ex.Φ  V Ex.ψ  => Ex.(Φ  V ψ )
+					((and (eq quant-left-head quant-right-head)
+								(eq quant-left-head +exists+)
+								(eq opr +disjunctive+))
+					 (let* ((A (make-quantifier-logical-expression  (cdr quants-left)  expr-left))
+									(rule (cons (bound quant-obj-right-head) (bound quant-obj-left-head)))
+									(B (substitute-term 
+											 (make-quantifier-logical-expression (cdr quants-right) expr-right) 
+											 (car rule)
+											 (cdr rule)))
+									(new-matrix (prenex% (make-connected-logical-expression operator A B))))
+
+						 (push rule addtional-rule)
+
+						 (make-quantifier-logical-expression
+								 (cons quant-obj-left-head (quants new-matrix))
+								 (expr new-matrix))))
+					;; Q1x1.Φ  & Q2x2.ψ  => Q1x1 Q2x2. (Φ  & ψ )
+					;; Q1x1.Φ  V Q2x2.ψ  => Q1x1 Q2x2. (Φ  V ψ )
+					(t 
+						(let* ((A (make-quantifier-logical-expression (cdr quants-left)  expr-left ))
+									 (B (make-quantifier-logical-expression (cdr quants-right) expr-right))
+									 (new-matrix (prenex% (make-connected-logical-expression operator A B))))
+								(make-quantifier-logical-expression 
+									(append (list quant-obj-left-head quant-obj-right-head) (quants new-matrix))
+									(expr new-matrix)))))))))
+
+
 
 ;; G には x が自由出現するがFにはしないことを意図している
 ;; なぜなら rename-bound-var されていて x はユニークなはずだから
@@ -133,8 +218,26 @@
 ;; Ex.G & F  =>  Ex.(G & F)
 ;;
 
+(defun prenex (lexpr)
+	(multiple-value-bind (expr rule) (rename-bound-var lexpr)	
+		;; ここで一応の rule をとっておく
+		;; といっても大部分はこのrule のだけを返せばおｋなはずなんだけど
+		;; prenex form にするときに Ex.P(x) V Ey.Q(y)
+		;; みたいのがきたときには Ex.(P(x) V Q(y)) にできるから
+		;; この場合に y -> x みたいな規則ができる. でこの規則を rule に適用させてやる
+		(let (addtional-rule)
+			(declare (special addtional-rule))
+			(let ((result (prenex% expr)))
+				(values 
+					result
+					(remove-duplicates 
+						(update-rule rule addtional-rule) 
+						:test #'rule=))))))
 
 (defmethod prenex% ((lexpr literal)) lexpr)
+
+(defmethod prenex% ((lexpr connected-logical-expression))
+	(join (operator lexpr) (left lexpr) (right lexpr)))
 
 (defmethod prenex% ((lexpr quantifier-logical-expression))
 	(with-accessors ((quants quants) (expr expr)) lexpr
@@ -149,53 +252,14 @@
 					quants new-expr)))))
 
 
-
-
-;;; left と right が operator によってくっついてる時に それらを適切にくっつける
-(defmethod join (operator (left quantifier-logical-expression) (right quantifier-logical-expression))
-	(with-accessors ((quants-left quants) (expr-left expr)) left
-		(with-accessors ((quants-right quants) (expr-right expr)) right
-			(let ((quants-left-head  (quant (car quants-left)))
-						(quants-right-head (quant (car quants-right))))
-				(cond 
-					((and (eq quants-left-head quants-right-head)
-								(eq quants-left-head +forall+)
-								(eq operator +conjunctive+))
-
-					 )
-					((and (eq quants-left-head quants-right-head)
-								(eq quants-left-head +exists+)
-								(eq operator +disjunctive+))
-
-					 )
-					(t 
-
-						))))))
-
-(defmethod prenex% ((lexpr connected-logical-expression))
-	(with-accessors ((operator operator) (left left) (right right))
-
-		(join (opr operator) left right)
-
-		)
-	)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+;;; 一度 prenex した式を negation つけて literalize しても
+;;; 量化子の場所は変わらず冠頭形なんだけど
+;;; Ax.(Ay.(Az.Ex.(Ew.~P))) みたいになっちゃうのですこしだけ綺麗にする
+(defmethod re-prenex ((lexpr literal)) lexpr)
+(defmethod re-prenex ((lexpr connected-logical-expression)) lexpr)
+(defmethod re-prenex ((lexpr quantifier-logical-expression))
+	(with-accessors ((quants quants) (expr expr)) lexpr
+		(let ((tmp (re-prenex expr)))
+			(make-quantifier-logical-expression
+				(append quants (quants tmp)) (expr tmp)))))
 

@@ -41,6 +41,8 @@
 					(simplify-base lexpr))))))
 
 
+
+
 (defun simplify-conseq-lexpr (lexpr)
 	;; rule は ((x . U-123) (y . U-456) ...) の形
 	;; U-123とかU-456 を追っていけば具体的な項をもとめられ、
@@ -50,8 +52,9 @@
 			(clause-formation
 				(skolemization 
 					(naive-cnf
-						(literalize 
-							(make-connected-logical-expression (make-operator +negation+) expr nil)))))
+						(re-prenex ;; 一度 prenex にして negation しても確かに以前として冠頭形ではあるんだけどすこし汚れるので re-prenexする
+							(literalize 
+								(make-connected-logical-expression (make-operator +negation+) expr nil))))))
 			rule)))
 
 
