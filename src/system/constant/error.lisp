@@ -29,3 +29,9 @@
 
 (define-condition invalid-quantifier-error (error)
   ())
+
+(define-condition free-variable-error (error)
+	((value 
+     :initform ""
+     :accessor value
+     :initarg :value)))
