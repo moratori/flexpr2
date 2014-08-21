@@ -103,19 +103,19 @@
   (cond 
     ((eq quant +forall+) +imply+)
     ((eq quant +exists+) +conjunctive+)
-    (t (error "quantifier required"))))
+    (t (error (make-condition 'invalid-operator-error :value quant)))))
 
 (defun opposite-opr (operator) 
   (cond 
     ((eq operator +conjunctive+) +disjunctive+)
     ((eq operator +disjunctive+) +conjunctive+)
-    (t (error "undefined operator"))))
+    (t (error (make-condition 'invalid-operator-error :value operator)))))
 
 (defun opposite-quantifier (quantifier)
   (cond 
     ((eq quantifier +forall+) +exists+)
     ((eq quantifier +exists+) +forall+)
-    (t (error "udnefined quantifier"))))
+    (t (error (make-condition 'invalid-operator-error :value quantifier)))))
 
 
 

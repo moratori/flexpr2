@@ -16,7 +16,10 @@
   ())
 
 (define-condition invalid-operator-error (error)
-  ())
+  ((value 
+     :initform ""
+     :accessor value
+     :initarg :value)))
 
 (define-condition invalid-token-error (error)
   ((value 

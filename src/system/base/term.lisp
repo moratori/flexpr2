@@ -7,6 +7,7 @@
         :flexpr2.system.base.struct)
   (:export
     :free-occurrence?
+		:closed-lexpr?
 		:substitute-term
 		:update-rule
 		:rule=
@@ -98,6 +99,7 @@
 
 
 
+;;; term が 自由出現するかどうか
 (defmethod free-occurrence? ((term vterm) (obj (eql nil))) nil)
 (defmethod free-occurrence? ((term1 vterm) (term2 vterm)) (term= term1 term2))
 
@@ -115,6 +117,38 @@
         (lambda (quantifier)
           (not (term= term (bound quantifier)))) quants)
       (free-occurrence? term expr))))
+
+
+
+(defun closed-lexpr? (lexpr)
+	(closed-lexpr?% lexpr nil))
+
+(defmethod closed-lexpr?% ((lexpr (eql nil))) t)
+(defmethod closed-lexpr?% ((term vterm) (bounds list))
+	(or (const term) (member term bounds :test #'term=)))
+(defmethod closed-lexpr?% ((lexpr term-container) (bounds list))
+	(every 
+		(lambda (x) (closed-lexpr? x bounds))
+		(terms lexpr)))
+(defmethod closed-lexpr?% ((lexpr connected-logical-expression) (bounds list))
+	(and 
+		(closed-lexpr? (left lexpr))
+		(closed-lexpr? (right lexpr))))
+(defmethod closed-lexpr?% ((lexpr quantifier-logical-expression) (bounds list))
+	(closed-lexpr?% 
+		(expr lexpr)
+		(append 
+			bounds 
+			(mapcar 
+				(lambda (q) (bound q)) 
+				(quants lexpr)))))
+
+
+
+
+
+
+
 
 
 
