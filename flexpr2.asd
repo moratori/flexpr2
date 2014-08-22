@@ -28,7 +28,7 @@
 				:components 
 				((:file "util")
 				 (:file "struct")
-				 (:file "term")))
+				 (:file "termutil")))
 			 (:module "io"
 				:serial t
 				:components
@@ -37,15 +37,22 @@
 			 (:module "formalize"
 				:serial t
 				:components 
-				((:file "preprocessor")
-				 (:file "rmquant")
-			   (:file "rmopr")
-				 (:file "prenex")
-				 (:file "cnf")
-				 (:file "skolem")
-				 (:file "reduction")
-				 (:file "literalize")
-				 (:file "top")))
+				((:module "lexpr"
+	 			  :serial t
+					:components
+						((:file "preprocessor")
+				 		 (:file "rmquant")
+			       (:file "rmopr")
+				     (:file "prenex")
+				     (:file "cnf")
+				     (:file "skolem")
+				     (:file "simpl")
+				     (:file "literalize")
+				     (:file "top")))
+				  (:module "term"
+           :serial t
+           :components
+            ((:file "simpl")))))
 			 (:module "core"
 				:serial t
 				:components 

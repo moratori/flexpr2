@@ -1,12 +1,12 @@
 
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.formalize.prenex
+(defpackage :flexpr2.system.formalize.lexpr.prenex
   (:use 
     :cl
     :flexpr2.system.constant.constant
     :flexpr2.system.base.struct)
-	(:import-from :flexpr2.system.base.term
+	(:import-from :flexpr2.system.base.termutil
 								:substitute-term
 								:update-rule
 								:rule=
@@ -14,7 +14,7 @@
 	(:export
 		:prenex
 		:re-prenex))
-(in-package :flexpr2.system.formalize.prenex)
+(in-package :flexpr2.system.formalize.lexpr.prenex)
 
 
 ;; 冠頭形に変形する

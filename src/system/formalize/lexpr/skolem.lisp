@@ -1,17 +1,17 @@
 
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.formalize.skolem
+(defpackage :flexpr2.system.formalize.lexpr.skolem
   (:use 
     :cl
     :flexpr2.system.constant.constant
     :flexpr2.system.base.struct)
-	(:import-from :flexpr2.system.base.term
+	(:import-from :flexpr2.system.base.termutil
 		:substitute-term)
 	(:export
 		:skolemization)
 	)
-(in-package :flexpr2.system.formalize.skolem)
+(in-package :flexpr2.system.formalize.lexpr.skolem)
 
 
 ;;; 量化子を削除して全称量化な式だけに変形する

@@ -1,7 +1,7 @@
 
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.base.term
+(defpackage :flexpr2.system.base.termutil
   (:use :cl
         :flexpr2.system.constant.constant
         :flexpr2.system.base.struct)
@@ -13,7 +13,7 @@
 		:rule=
     :term=)
   )
-(in-package :flexpr2.system.base.term)
+(in-package :flexpr2.system.base.termutil)
 
 
 ;;; mgu 求めたり 項の置換とかいろいろ項に関わること

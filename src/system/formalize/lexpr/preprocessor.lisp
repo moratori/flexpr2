@@ -1,7 +1,7 @@
 
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.formalize.preprocessor
+(defpackage :flexpr2.system.formalize.lexpr.preprocessor
   (:use 
     :cl
     :flexpr2.system.constant.constant
@@ -9,7 +9,7 @@
   (:export
     :remove-domain-sugar)
   )
-(in-package :flexpr2.system.formalize.preprocessor)
+(in-package :flexpr2.system.formalize.lexpr.preprocessor)
 
 
 

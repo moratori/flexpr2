@@ -4,8 +4,8 @@
 
 (use-package :lisp-unit)
 (import '(flexpr2.system.io.reader:parse
-          flexpr2.system.formalize.top:simplify-premises-lexpr
-					flexpr2.system.formalize.top:simplify-conseq-lexpr-for-resolution))
+          flexpr2.system.formalize.lexpr.top:simplify-premises-lexpr
+					flexpr2.system.formalize.lexpr.top:simplify-conseq-lexpr-for-resolution))
 
 (defvar *test-case*
   '(

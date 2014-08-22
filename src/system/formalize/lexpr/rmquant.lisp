@@ -1,17 +1,17 @@
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.formalize.rmquant
+(defpackage :flexpr2.system.formalize.lexpr.rmquant
   (:use 
     :cl
     :flexpr2.system.constant.constant
     :flexpr2.system.base.struct)
-  (:import-from :flexpr2.system.base.term
+  (:import-from :flexpr2.system.base.termutil
                 :free-occurrence?)
   (:export
     :remove-unused-quantifier
     )
   )
-(in-package :flexpr2.system.formalize.rmquant)
+(in-package :flexpr2.system.formalize.lexpr.rmquant)
 
 ;;; 束縛されていない不必要な量化子を削除する
 

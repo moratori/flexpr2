@@ -1,14 +1,14 @@
 
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.formalize.rmopr
+(defpackage :flexpr2.system.formalize.lexpr.rmopr
   (:use 
     :cl
     :flexpr2.system.constant.constant
     :flexpr2.system.base.struct)
   (:export
     :remove-operator))
-(in-package :flexpr2.system.formalize.rmopr)
+(in-package :flexpr2.system.formalize.lexpr.rmopr)
 
 
 

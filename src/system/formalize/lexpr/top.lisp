@@ -1,26 +1,26 @@
 
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.formalize.top
+(defpackage :flexpr2.system.formalize.lexpr.top
   (:use :cl
         :flexpr2.system.constant.constant
         :flexpr2.system.base.struct
-        :flexpr2.system.formalize.preprocessor
-        :flexpr2.system.formalize.rmquant
-        :flexpr2.system.formalize.rmopr
-        :flexpr2.system.formalize.literalize
-        :flexpr2.system.formalize.prenex
-        :flexpr2.system.formalize.cnf
-        :flexpr2.system.formalize.skolem
-        :flexpr2.system.formalize.reduction
+        :flexpr2.system.formalize.lexpr.preprocessor
+        :flexpr2.system.formalize.lexpr.rmquant
+        :flexpr2.system.formalize.lexpr.rmopr
+        :flexpr2.system.formalize.lexpr.literalize
+        :flexpr2.system.formalize.lexpr.prenex
+        :flexpr2.system.formalize.lexpr.cnf
+        :flexpr2.system.formalize.lexpr.skolem
+        :flexpr2.system.formalize.lexpr.simpl
         )
-	(:import-from :flexpr2.system.base.term
+	(:import-from :flexpr2.system.base.termutil
 								:closed-lexpr?)
   (:export
     :simplify-premises-lexpr
 		:simplify-conseq-lexpr-for-resolution)
   )
-(in-package :flexpr2.system.formalize.top)
+(in-package :flexpr2.system.formalize.lexpr.top)
 
 
 

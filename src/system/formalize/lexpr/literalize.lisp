@@ -1,13 +1,13 @@
 
 (in-package :cl-user)
-(defpackage :flexpr2.system.formalize.literalize
+(defpackage :flexpr2.system.formalize.lexpr.literalize
   (:use 
     :cl
     :flexpr2.system.constant.constant
     :flexpr2.system.base.struct)
   (:export
     :literalize))
-(in-package :flexpr2.system.formalize.literalize)
+(in-package :flexpr2.system.formalize.lexpr.literalize)
 
 
 
