@@ -123,17 +123,24 @@
 (defun closed-lexpr? (lexpr)
 	(closed-lexpr?% lexpr nil))
 
-(defmethod closed-lexpr?% ((lexpr (eql nil))) t)
+(defmethod closed-lexpr?% ((lexpr (eql nil)) (bounds list)) t)
+
 (defmethod closed-lexpr?% ((term vterm) (bounds list))
 	(or (const term) (member term bounds :test #'term=)))
+
 (defmethod closed-lexpr?% ((lexpr term-container) (bounds list))
 	(every 
-		(lambda (x) (closed-lexpr? x bounds))
+		(lambda (x) 
+			(closed-lexpr?% x bounds))
 		(terms lexpr)))
+
 (defmethod closed-lexpr?% ((lexpr connected-logical-expression) (bounds list))
 	(and 
-		(closed-lexpr? (left lexpr))
-		(closed-lexpr? (right lexpr))))
+		(closed-lexpr?% 
+			(left lexpr)  bounds)
+		(closed-lexpr?% 
+			(right lexpr) bounds)))
+
 (defmethod closed-lexpr?% ((lexpr quantifier-logical-expression) (bounds list))
 	(closed-lexpr?% 
 		(expr lexpr)

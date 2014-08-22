@@ -18,7 +18,7 @@
 								:closed-lexpr?)
   (:export
     :simplify-premises-lexpr
-		:simplify-conseq-lexpr)
+		:simplify-conseq-lexpr-for-resolution)
   )
 (in-package :flexpr2.system.formalize.top)
 

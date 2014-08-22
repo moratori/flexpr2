@@ -5,7 +5,7 @@
 (use-package :lisp-unit)
 (import '(flexpr2.system.io.reader:parse
           flexpr2.system.formalize.top:simplify-premises-lexpr
-					flexpr2.system.formalize.top:simplify-conseq-lexpr))
+					flexpr2.system.formalize.top:simplify-conseq-lexpr-for-resolution))
 
 (defvar *test-case*
   '(
@@ -46,7 +46,7 @@
   (dolist (each *test-case*)
     (let* ((lexpr (parse each))
 					 (tmp1 (simplify-premises-lexpr lexpr))
-					 (tmp2 (simplify-conseq-lexpr   lexpr)))
+					 (tmp2 (simplify-conseq-lexpr-for-resolution   lexpr)))
 			(format t "~A~%~A~%~%" tmp1 tmp2)
       (assert-true tmp1)
 			(assert-true tmp2))))

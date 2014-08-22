@@ -109,47 +109,15 @@
 												collect rule))))))
 
 
-
-
-
-
-(defmethod join ((operator operator) (left literal) (right literal))
+(defmethod join ((operator operator) (left logical-expression) (right logical-expression))
 	(make-connected-logical-expression operator left right))
 
-(defmethod join ((operator operator) (left connected-logical-expression) (right connected-logical-expression))
-	(let ((tmp1 (prenex% left))
-				(tmp2 (prenex% right)))
-		(make-quantifier-logical-expression
-			(append (quants tmp1) (quants tmp2))
-			(make-connected-logical-expression operator (expr tmp1) (expr tmp2)))))
 
-
-(defmethod join ((operator operator) (left literal) (right connected-logical-expression)) (join operator right left))
-(defmethod join ((operator operator) (left connected-logical-expression) (right literal)) 
-	(let ((tmp1 (prenex% left)))
-		(make-quantifier-logical-expression
-			(quants tmp1)
-			(make-connected-logical-expression operator (expr tmp1) right))))
-
-
-(defmethod join ((operator operator) (left literal) (right quantifier-logical-expression)) (join operator right left))
-(defmethod join ((operator operator) (left quantifier-logical-expression) (right literal)) 
-	(with-accessors ((quants quants) (expr expr)) left
-		(let ((tmp (prenex% expr)))
-			(make-quantifier-logical-expression
-				(append quants (quants tmp))
-				(make-connected-logical-expression operator (expr tmp) right)))))
-
-
-(defmethod join ((operator operator) (left connected-logical-expression) (right quantifier-logical-expression)) (join operator right left))
-(defmethod join ((operator operator) (left quantifier-logical-expression) (right connected-logical-expression)) 
-	(with-accessors ((quants quants) (expr expr)) left
-		(let ((tmp1 (prenex% expr))
-					(tmp2 (prenex% right)))
-			(make-quantifier-logical-expression
-				(append quants (quants tmp1) (quants tmp2))
-				(make-connected-logical-expression
-					operator (expr tmp1) (expr tmp2))))))
+(defmethod join ((operator operator) (left logical-expression) (right quantifier-logical-expression)) (join operator right left))
+(defmethod join ((operator operator) (left quantifier-logical-expression) (right logical-expression)) 
+	(make-quantifier-logical-expression
+		(quants left)
+		(make-connected-logical-expression operator (expr left) right)))
 
 
 ;;; left と right が operator によってくっついてる時に それらを適切にくっつけ冠頭形にする
@@ -175,8 +143,7 @@
 									(new-matrix (prenex% (make-connected-logical-expression operator A B))))
 							 (make-quantifier-logical-expression
 								 (cons quant-obj-left-head (quants new-matrix))
-								 (expr new-matrix))
-						 ))
+								 (expr new-matrix))))
 					;; Ex.Φ  V Ex.ψ  => Ex.(Φ  V ψ )
 					((and (eq quant-left-head quant-right-head)
 								(eq quant-left-head +exists+)
@@ -237,7 +204,7 @@
 (defmethod prenex% ((lexpr literal)) lexpr)
 
 (defmethod prenex% ((lexpr connected-logical-expression))
-	(join (operator lexpr) (left lexpr) (right lexpr)))
+	(join (operator lexpr) (prenex% (left lexpr)) (prenex% (right lexpr))))
 
 (defmethod prenex% ((lexpr quantifier-logical-expression))
 	(with-accessors ((quants quants) (expr expr)) lexpr
