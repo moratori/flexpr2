@@ -40,9 +40,9 @@
 
 
 ;;; 置き換え元が純粋に term= で比較して true　となるものについて置き換えをおこなう
-(defmethod substitute-term ((target vterm) (old vterm) (new vterm))
+(defmethod substitute-term ((target vterm) (old vterm) (new term))
 	(if (term= target old) new target))
-(defmethod substitute-term ((target fterm) (old vterm) (new vterm))
+(defmethod substitute-term ((target fterm) (old vterm) (new term))
 	(make-fterm
 		(fsymbol target)
 		(mapcar 
@@ -50,7 +50,7 @@
 				(substitute-term x old new))
 			(terms target))))
 
-(defmethod substitute-term ((target literal) (old vterm) (new vterm))
+(defmethod substitute-term ((target literal) (old vterm) (new term))
 	(make-literal
 		(negation target)
 		(pred target)
@@ -59,7 +59,7 @@
 				(substitute-term x old new))
 			(terms target))))
 
-(defmethod substitute-term ((target connected-logical-expression) (old vterm) (new vterm))
+(defmethod substitute-term ((target connected-logical-expression) (old vterm) (new term))
 	(make-connected-logical-expression 
 		(operator target)
 		(substitute-term (left target) old new)
@@ -136,19 +136,13 @@
 
 (defmethod closed-lexpr?% ((lexpr connected-logical-expression) (bounds list))
 	(and 
-		(closed-lexpr?% 
-			(left lexpr)  bounds)
-		(closed-lexpr?% 
-			(right lexpr) bounds)))
+		(closed-lexpr?% (left lexpr)  bounds)
+		(closed-lexpr?% (right lexpr) bounds)))
 
 (defmethod closed-lexpr?% ((lexpr quantifier-logical-expression) (bounds list))
 	(closed-lexpr?% 
 		(expr lexpr)
-		(append 
-			bounds 
-			(mapcar 
-				(lambda (q) (bound q)) 
-				(quants lexpr)))))
+		(append bounds (mapcar #'bound (quants lexpr)))))
 
 
 

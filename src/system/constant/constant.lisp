@@ -44,6 +44,8 @@
 
 		:+unique-bound-var-prefix+
 
+		:+skolem-constant-prefix+
+		:+skolem-function-prefix+
     )
   )
 
@@ -98,6 +100,8 @@
     `(,+imply+ . 1)
     `(,+equivalence+ . 1)))
 (defvar +unique-bound-var-prefix+ "v_")
+(defvar +skolem-constant-prefix+  "sc_")
+(defvar +skolem-function-prefix+  "sf_")
 
 (defun quantifier-domain (quant)
   (cond 

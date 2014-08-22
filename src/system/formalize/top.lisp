@@ -37,7 +37,7 @@
 
 
 (defun simplify-premises-lexpr (lexpr &optional (not-closed-error nil))
-	(let ((tmp  (skolemization (prenex (simplify-base lexpr)))))
+	(let ((tmp  (skolemization (prenex (simplify-base lexpr)) +exists+)))
 
 		(when (and not-closed-error (not (closed-lexpr? tmp)))
 			(error (make-condition 'free-variable-error :value tmp)))
@@ -53,7 +53,7 @@
 	;;
 	;;;; 一度 prenex にして negation しても確かに以前として冠頭形ではあるんだけどすこし汚れるので re-prenexする
 	(multiple-value-bind (expr rule) (prenex (simplify-base lexpr))
-		(let ((tmp (skolemization (re-prenex (literalize (make-connected-logical-expression (make-operator +negation+) expr nil))))))
+		(let ((tmp (skolemization (re-prenex (literalize (make-connected-logical-expression (make-operator +negation+) expr nil))) +exists+)))
 
 			(when (and not-closed-error (not (closed-lexpr? tmp)))
 				(error (make-condition 'free-variable-error :value tmp)))
