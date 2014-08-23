@@ -31,9 +31,17 @@
 				(remove-domain-sugar lexpr)))))
 
 
+
 (defun clause-formation (lexpr)
 	lexpr
 	)
+
+
+;;; skolemization された式は全称量化子しかついてないから
+;;; それらは全部取り除く
+(defmethod remove-forall ((lexpr logical-expression)) lexpr)
+(defmethod remove-forall ((lexpr quantifier-logical-expression))
+	(expr lexpr))
 
 
 (defun simplify-premises-lexpr (lexpr &optional (not-closed-error nil))
@@ -42,7 +50,8 @@
 		(when (and not-closed-error (not (closed-lexpr? tmp)))
 			(error (make-condition 'free-variable-error :value tmp)))
 
-		(clause-formation (naive-cnf tmp))))
+		(clause-formation 
+			(naive-cnf (remove-forall tmp)))))
 
 
 
@@ -51,6 +60,10 @@
 	;; U-123とかU-456 を追っていけば具体的な項をもとめられ、
 	;; かつユーザが入力した時につかった変数に対応させられる
 	;;
+	;; 式: Ex.P(x) & Ex.Q(x) みたいな式が入力された場合 ((x . U123) (x . U234))
+	;; みたいなのが返ってくるのは注意. これ不具合とかではなくて式中の x の出現は２回あるけどどちらも別の文脈で束縛されていて
+	;; べつのものだから、 具体的な項は ２つ帰ってくるわけだけど　それなのに 式全体でみた場合 x ひとつしかないから(!!)
+	;;
 	;;;; 一度 prenex にして negation しても確かに以前として冠頭形ではあるんだけどすこし汚れるので re-prenexする
 	(multiple-value-bind (expr rule) (prenex (simplify-base lexpr))
 		(let ((tmp (skolemization (re-prenex (literalize (make-connected-logical-expression (make-operator +negation+) expr nil))) +exists+)))
@@ -58,7 +71,7 @@
 			(when (and not-closed-error (not (closed-lexpr? tmp)))
 				(error (make-condition 'free-variable-error :value tmp)))
 			
-			(values (clause-formation (naive-cnf tmp)) rule))))
+			(values (clause-formation (naive-cnf (remove-forall tmp))) rule))))
 
 
 

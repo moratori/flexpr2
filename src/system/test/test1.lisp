@@ -11,10 +11,7 @@
   '(
 		"A(x : R).P(x)"
 		"E(x : T).P(x)"
-
-		"A(x : human)E(y : human).love(x,y)"
-		
-
+	"A(x : human)E(y : human).love(x,y)"		
 		"~Ax.P(x)"
 		"~Ax.~Ey.P(x,y)"
 
@@ -27,14 +24,16 @@
     "Q&S"
     "~(P V B)"
     "P > R V S > T & U"
+    "(P & (~R & ~S)) V (T & U)"
+		"(R & S) V (P & Q)"
     "~P & R V ~S - S"
     "Ax.P(x)"
     "Ex.P(x)"
-    "Ax.(P(x) > Q(x))"
+   "Ax.(P(x) > Q(x))"
     "Ax.(P(x) & Ey  Az.(P(y,z) > Q(z )   VR(x  , y)))"
     "A(x : R)E(y : D).~R(x,y)"   
     "A(x : D)E(y : D).(P(x,y) > Ez.Q(y))"
-    "AxA(y : D1)E(z : D2)AwEa.P(x,z)"
+   "AxA(y : D1)E(z : D2)AwEa.P(x,z)"
     "~AxEyAz.P(x,y,z)"
     "~Ax.~Ey.P(x,y)"
     "Ax.(P(z) & Ax.Q(x))"
@@ -46,10 +45,11 @@
   (dolist (each *test-case*)
     (let* ((lexpr (parse each))
 					 (tmp1 (simplify-premises-lexpr lexpr))
-					 (tmp2 (simplify-conseq-lexpr-for-resolution   lexpr)))
-			(format t "~A~%~A~%~%" tmp1 tmp2)
+					 )
+			(format t "~A~%~%" tmp1 )
       (assert-true tmp1)
-			(assert-true tmp2))))
+
+			)))
 
 
 (let ((result (run-tests '(parser))))

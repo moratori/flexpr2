@@ -9,6 +9,13 @@
 
 (defvar *test-case*
   '(
+
+		"(P & Q) V (R & (J V H) & T)"
+		"Ex.P(x) & Ex.Q(x)"
+
+		"(P & Q) V R"
+		"P & Q > R"
+
 		"Ex.P(x) V Ey.Q(y) V Ez.R(z)"
 		"(P(C) V Ex.Q(x)) V (Ey.R(y) V S(C))"
 		"Ax.P(x) V Ay.Q(y)"
@@ -20,7 +27,6 @@
 		"Ax.(P(x) > (Q(x) & Ex.R(x)))"
 		"Ex.P(x)"
 		"AxEyAwEz.P(x,y,z,w)"
-
 
      )
   )
