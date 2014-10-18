@@ -75,3 +75,9 @@
 
 
 
+(defmethod print-object ((expr clause) stream)
+  (format stream 
+					(format nil "<~~{~~A~~^ ~A ~~}>" (print-object (make-operator +disjunctive+) nil))
+					(literals expr)))
+
+

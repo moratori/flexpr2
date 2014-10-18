@@ -37,16 +37,26 @@
 (defmethod join (opr (left connected-logical-expression) (right logical-expression))
 	(with-accessors ((left-operator operator) (left-left left) (left-right right)) left
 		(let ((left-opr (opr left-operator)))
-			;; ここの条件式だけが CNF 形にするかを決めてる
-			(if (and (eq opr +disjunctive+) (eq left-opr +conjunctive+))
-				(make-connected-logical-expression
+			;; ここの cond の条件が綺麗にならない理由として
+			;; CNF 形にできるか否かという問題が 式のデータ型だけに依存しているのではなく
+			;; そのオペレータにも依存しているから
+			(cond 
+			  ((and (eq opr +disjunctive+) (eq left-opr +conjunctive+))
+				 (make-connected-logical-expression
 					(make-operator +conjunctive+)
 					(naive-cnf
 						(make-connected-logical-expression
 							(make-operator +disjunctive+) right left-left))
 					(naive-cnf
 						(make-connected-logical-expression
-							(make-operator +disjunctive+) right left-right)))
-				(make-connected-logical-expression 
-					 (make-operator opr) left right)))))
+							(make-operator +disjunctive+) right left-right))))
+				;; ここの条件が綺麗じゃない
+				;; (P V Q) V (R & S) みたいなの(ひっくり返せばできる)が来た時に 最後の節に落ちないように
+				((and (eq opr +disjunctive+)
+					    (typep right 'connected-logical-expression)
+							(eq (opr (operator right)) +conjunctive+))
+				 (join opr right left))
+				(t 
+					(make-connected-logical-expression 
+					 (make-operator opr) left right))))))
 

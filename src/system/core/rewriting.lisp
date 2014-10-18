@@ -7,3 +7,18 @@
   )
 
 (in-package :flexpr2.system.core.rewriting)
+
+
+
+
+
+
+
+
+
+
+
+;;; premises conseq の何れも節形式
+(defun prove-equational (premises conseq)
+
+	)

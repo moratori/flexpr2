@@ -32,9 +32,23 @@
 
 
 
+;;; clause-form とは clauseオブジェクトのリストなのでそれに変換する
 (defun clause-formation (lexpr)
-	lexpr
-	)
+	(labels 
+		((collect-literal  (lexpr) 
+			 (if (typep lexpr 'literal) (list lexpr)
+				 (append (collect-literal (left lexpr)) (collect-literal (right lexpr)))))
+		 (clause-form (lexpr)
+			 (cond 
+				 ((typep lexpr 'literal)
+					(list (make-clause (list lexpr))))
+				 (t 
+					 (if (eq (opr (operator lexpr)) +disjunctive+)
+						 (list (make-clause (collect-literal lexpr)))
+						 (append 
+							 (clause-form (left lexpr))
+							 (clause-form (right lexpr))))))))
+		(clause-form lexpr)))
 
 
 ;;; skolemization された式は全称量化子しかついてないから
@@ -44,6 +58,9 @@
 	(expr lexpr))
 
 
+
+
+
 (defun simplify-premises-lexpr (lexpr &optional (not-closed-error nil))
 	(let ((tmp  (skolemization (prenex (simplify-base lexpr)) +exists+)))
 
@@ -51,7 +68,7 @@
 			(error (make-condition 'free-variable-error :value tmp)))
 
 		(clause-formation 
-			(naive-cnf (remove-forall tmp)))))
+			(print (naive-cnf (remove-forall tmp))))))
 
 
 
